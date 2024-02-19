@@ -8,6 +8,7 @@ from aws_cdk import (
     aws_lambda as lambda_,
     aws_s3_notifications as s3_notifications,
     aws_ec2 as ec2,
+    CfnOutput,
 )
 from constructs import Construct
 import json
@@ -32,6 +33,20 @@ class DiscordBedrockStack(Stack):
             allow_all_outbound=True,
         )
 
+        # HTTPアクセスを許可
+        ec2_sg.add_ingress_rule(
+            peer=ec2.Peer.any_ipv4(),
+            connection=ec2.Port.tcp(80),
+            description="Allow HTTP access from the Internet",
+        )
+
+        # HTTPSアクセスを許可
+        ec2_sg.add_ingress_rule(
+            peer=ec2.Peer.any_ipv4(),
+            connection=ec2.Port.tcp(443),
+            description="Allow HTTPS access from the Internet",
+        )
+
         # EC2インスタンスの定義の前にユーザーデータスクリプトを定義
         user_data = ec2.UserData.for_linux()
         user_data.add_commands(
@@ -53,6 +68,17 @@ class DiscordBedrockStack(Stack):
             user_data=user_data, 
             role=ec2_role,
             ssm_session_permissions=True  # SSMセッションマネージャのアクセスを許可
+        )
+
+        # Elastic IPの作成
+        eip = ec2.CfnEIP(self, "EIP")
+
+        # EC2インスタンスにElastic IPを関連付ける
+        eip_association = ec2.CfnEIPAssociation(
+            self,
+            "EipAssociation",
+            eip=eip.ref,
+            instance_id=ec2_instance1.instance_id
         )
 
         # # Lambdaレイヤーの定義
@@ -93,6 +119,23 @@ class DiscordBedrockStack(Stack):
         # image_bucket.add_event_notification(s3.EventType.OBJECT_CREATED_PUT,
         #     s3_notifications.LambdaDestination(lambda_function)
         # )
+
+        # SSMセッション開始コマンドの出力
+        CfnOutput(
+            self,
+            "StartSsmSessionCommand",
+            value=f"aws ssm start-session --target {ec2_instance1.instance_id}",
+            description="上記のコマンドを実行してSSMを利用してEC2に接続してください",
+        )
+
+        # Elastic IPアドレスの出力
+        CfnOutput(
+            self,
+            "ElasticIpAddress",
+            value=eip.ref,
+            description=
+            "The Elastic IP address of the EC2 instance",
+        )
 
 app = App()
 DiscordBedrockStack(app, "DiscordBedrockStack")

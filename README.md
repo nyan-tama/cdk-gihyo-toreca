@@ -36,7 +36,18 @@ cd chapter-1
 #READMEのマニュアルを参照
 cat README.md
 ```
+
+## EC2の接続解除
+```
+exit
+```
+
 ## AWS本番環境の削除
 ```
-$ cdk destroy
+cdk destroy
+```
+
+## Dockerの終了
+```
+exit
 ```
