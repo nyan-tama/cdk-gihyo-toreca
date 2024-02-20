@@ -1,34 +1,38 @@
-FROM --platform=linux/amd64 node:20
+# Python 3.9のベースイメージを使用
+FROM python:3.9
 
+# 作業ディレクトリを設定
+WORKDIR /work
+
+# aws cliのインストール
+RUN apt-get update && \
+    apt-get install -y awscli
+
+# Node.jsのインストール
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs
+RUN npm install -g npm@latest
+
+# AWS CDKのグローバルインストール
 RUN npm install -g aws-cdk
 
-RUN apt-get update \
-    && apt-get install -y less vim
+# AWS認証ファイル格納ディレクトリを作成
+RUN mkdir ~/.aws
 
-# PythonのバージョンはAWSのAmazon Linux 2023に合わせるので、3.9.16に変更した
-RUN cd /opt \
-    && curl -q "https://www.python.org/ftp/python/3.9.16/Python-3.9.16.tgz" -o Python-3.9.16.tgz \
-    && tar -xzf Python-3.9.16.tgz \
-    && cd Python-3.9.16 \
-    && ./configure --enable-optimizations \
-    && make install
+# 依存関係をコピー
+COPY requirements.txt .
 
-RUN cd /opt \
-    && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
-    && unzip awscliv2.zip \
-    && ./aws/install
+# 依存関係をインストール
+RUN pip install -r requirements.txt
 
-# 不要になったファイルを削除
-RUN rm -rf /opt/*
+# AWSのデフォルトリージョンを設定
+ENV AWS_DEFAULT_REGION=ap-northeast-1  
 
-# Session Manager Pluginのインストール EC2と簡単に接続できるようなもの
-RUN curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" -o "session-manager-plugin.deb" \
-    && dpkg -i session-manager-plugin.deb \
-    && rm session-manager-plugin.deb
+# タイムゾーンを日本時間に設定
+ENV TZ=Asia/Tokyo
 
-# プロンプトの表示を変更
-RUN echo "alias ls='ls --color=auto'" >> /root/.bashrc
-RUN echo "PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@aws-cdk\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '" >> /root/.bashrc
+# コンソールの表示を変えてわかりやすく
+RUN echo "alias ls='ls --color=auto'" >> /root/.bashrc && \
+    echo "PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@cdk-container\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '" >> /root/.bashrc
 
-WORKDIR /root/work
-CMD ["/bin/bash"]
+ENTRYPOINT ["/bin/bash"]

@@ -1,19 +1,16 @@
-## Dockerイメージの作成
-```
-docker build -t cdk-gihyo-toreca .
-```
 ## Dockerの起動とDockerの中に入る
 ```
-docker run --rm -it -v ~/.aws:/root/.aws -v ${PWD}:/root/work cdk-gihyo-toreca
+docker-compose run --rm cdk
 ```
-## python環境の準備
+コンテナから出る時は『exit』を入力して下さい。
 ```
-pip3 install -r requirements.txt
+exit
 ```
-## AWS本番環境の初期設定
+
+## CDK環境の初期設定
 ```
-# 実行は初回時のみでOK CDKデプロイに必要な設定AWSに上に作成される
-# すでに作成済みの場合不要
+# 実行は初回時のみでOK CDKデプロイに必要な設定がAWSに上に作成される
+# すでに作成済みの場合は実行不要
 cdk bootstrap 
 ```
 ## AWS本番環境の構築 
