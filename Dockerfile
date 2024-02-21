@@ -16,6 +16,11 @@ RUN npm install -g npm@latest
 # AWS CDKのグローバルインストール
 RUN npm install -g aws-cdk
 
+# SSM Pluginのインストール
+RUN curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_arm64/session-manager-plugin.deb" -o "session-manager-plugin.deb" && \
+    dpkg -i session-manager-plugin.deb && \
+    rm session-manager-plugin.deb
+    
 # AWS認証ファイル格納ディレクトリを作成
 RUN mkdir ~/.aws
 
