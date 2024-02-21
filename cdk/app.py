@@ -20,6 +20,20 @@ class DiscordBotEC2Stack(Stack):
             assumed_by=iam.ServicePrincipal("ec2.amazonaws.com"),
         )
 
+        # Bedrockモデル呼び出し権限のインラインポリシーを作成しロールにアタッチ
+        ec2_role.add_to_policy(iam.PolicyStatement(
+            actions=["bedrock:InvokeModel"],
+            resources=["*"],
+            effect=iam.Effect.ALLOW
+        ))
+
+        # 翻訳権限のインラインポリシーを作成しロールにアタッチ
+        ec2_role.add_to_policy(iam.PolicyStatement(
+            actions=["translate:TranslateText"],
+            resources=["*"],
+            effect=iam.Effect.ALLOW  
+        ))
+
         # EC2セキュリティグループの定義
         ec2_sg = ec2.SecurityGroup(
             self, "DiscordBedrock-EC2-Sg",
