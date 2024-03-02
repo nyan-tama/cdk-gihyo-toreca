@@ -28,7 +28,7 @@ git clone https://github.com/あなたのgithubアカウント名/gihyo-toreca.g
 cd gihyo-toreca
 
 #実行したい各チャプターを指定
-cd chapter-1
+cd chapter-2など
 
 #READMEのマニュアルを参照
 cat README.md
