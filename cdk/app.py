@@ -71,7 +71,7 @@ class DiscordBotEC2Stack(Stack):
             effect=iam.Effect.ALLOW
         ))
 
-        # 第四回目に必要　S3のインラインポリシーを作成しロールにアタッチ
+        # 第五回目に必要　S3のインラインポリシーを作成しロールにアタッチ
         ec2_role.add_to_policy(iam.PolicyStatement(
             actions=["s3:*"],
             resources=["arn:aws:s3:::*"],
