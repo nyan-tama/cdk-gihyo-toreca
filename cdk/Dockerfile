@@ -4,9 +4,9 @@ FROM python:3.9
 # 作業ディレクトリを設定
 WORKDIR /work
 
-# aws cliのインストール
+# aws cliとlessのインストール
 RUN apt-get update && \
-    apt-get install -y awscli
+    apt-get install -y awscli less
 
 # Node.jsのインストール
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \

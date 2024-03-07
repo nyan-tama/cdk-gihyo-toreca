@@ -53,7 +53,8 @@ class DiscordBotEC2Stack(Stack):
         CfnOutput(
             self,
             "StartSsmSessionCommand",
-            value=f"aws ssm start-session --target {ec2_instance.instance_id}",
+            value=f"aws ssm start-session --target {ec2_instance.instance_id}\n\n"
+                "sudo su - ec2-user",
             description="上記のコマンドを実行してSSMを利用してEC2に接続してください",
         )
 
@@ -75,6 +76,16 @@ class DiscordBotEC2Stack(Stack):
         ec2_role.add_to_policy(iam.PolicyStatement(
             actions=["s3:*"],
             resources=["arn:aws:s3:::*"],
+            effect=iam.Effect.ALLOW,
+        ))
+
+        # 第五回目に必要　Secrets Manager アクセス権限のインラインポリシーを作成しロールにアタッチ
+        ec2_role.add_to_policy(iam.PolicyStatement(
+            actions=[
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+            ],
+            resources=["*"],
             effect=iam.Effect.ALLOW,
         ))
 
