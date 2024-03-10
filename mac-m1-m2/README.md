@@ -27,10 +27,10 @@ sudo su - ec2-user
 git clone https://github.com/あなたのgithubアカウント名/gihyo-toreca.git
 cd gihyo-toreca
 
-#実行したい各チャプターを指定
+# 実行したい各チャプターを指定
 cd chapter-2など
 
-#READMEのマニュアルを参照
+# READMEのマニュアルを参照
 cat README.md
 ```
 

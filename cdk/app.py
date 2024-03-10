@@ -58,28 +58,28 @@ class DiscordBotEC2Stack(Stack):
             description="上記のコマンドを実行してSSMを利用してEC2に接続してください",
         )
 
-        # 第三回に必要　Bedrockモデル呼び出し権限のインラインポリシーを作成しロールにアタッチ
+        # 第3回目に必要　Bedrockモデル呼び出し権限のインラインポリシーを作成しロールにアタッチ
         ec2_role.add_to_policy(iam.PolicyStatement(
             actions=["bedrock:InvokeModel"],
             resources=["*"],
             effect=iam.Effect.ALLOW
         ))
 
-        # 第四回目に必要　翻訳権限のインラインポリシーを作成しロールにアタッチ
+        # 第4回目に必要　翻訳権限のインラインポリシーを作成しロールにアタッチ
         ec2_role.add_to_policy(iam.PolicyStatement(
             actions=["translate:TranslateText"],
             resources=["*"],
             effect=iam.Effect.ALLOW
         ))
 
-        # 第五回目に必要　S3のインラインポリシーを作成しロールにアタッチ
+        # 第5回目に必要　S3のインラインポリシーを作成しロールにアタッチ
         ec2_role.add_to_policy(iam.PolicyStatement(
             actions=["s3:*"],
             resources=["arn:aws:s3:::*"],
             effect=iam.Effect.ALLOW,
         ))
 
-        # 第五回目に必要　Secrets Manager アクセス権限のインラインポリシーを作成しロールにアタッチ
+        # 第5回目に必要　Secrets Manager アクセス権限のインラインポリシーを作成しロールにアタッチ
         ec2_role.add_to_policy(iam.PolicyStatement(
             actions=[
                 "secretsmanager:GetSecretValue",
